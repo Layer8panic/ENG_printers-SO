@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>English Oral Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1e9; --card:#fffdf9; --ink:#1d2433; --muted:#6b6f7a; --line:#e6ddcf;
+  --blue:#2f4fd8; --blue-soft:#e6ebff; --coral:#e8603c; --coral-soft:#fde8e1;
+  --green:#1f8a5b; --green-soft:#ddf3e8; --amber:#b7791f; --amber-soft:#fbefd6;
+  --radius:18px; --shadow:0 1px 2px rgba(29,36,51,.06),0 6px 18px rgba(29,36,51,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#14171f;--card:#1d212c;--ink:#eef0f5;--muted:#9aa0ad;--line:#2c3140;
+  --blue:#8aa2ff;--blue-soft:#232b4a;--coral:#ff8a66;--coral-soft:#3a2520;
+  --green:#5fd39c;--green-soft:#173327;--amber:#f0b75a;--amber-soft:#3a2e17;
+  --shadow:none;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.45}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0;letter-spacing:-.01em}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top) + 12px) 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid transparent}
+header.scrolled{border-bottom-color:var(--line)}
+header h1{font-size:21px;flex:1}
+.back{width:38px;height:38px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);display:none;align-items:center;justify-content:center;font-size:20px}
+.back.show{display:flex}
+.speed{font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px;background:var(--card);box-shadow:var(--shadow)}
+main{padding:6px 16px calc(96px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:12px 0;border:1px solid var(--line)}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:14px;font-size:12px;font-weight:700;color:var(--muted)}
+nav button .ic{font-size:22px;line-height:1}
+nav button.on{color:var(--blue);background:var(--blue-soft)}
+.topic{display:flex;align-items:center;gap:14px;width:100%;text-align:left}
+.topic .num{flex:none;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--blue-soft)}
+.topic h3{font-size:17px;line-height:1.25}
+.bar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--green);border-radius:6px;transition:width .4s}
+.qrow{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:14px 4px;border-bottom:1px solid var(--line)}
+.qrow:last-child{border-bottom:0}
+.qrow .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:9px;background:var(--line)}
+.dot.s3{background:var(--green)}.dot.s2{background:var(--amber)}.dot.s1{background:var(--coral)}
+.qbig{font-family:'Fraunces',Georgia,serif;font-size:22px;line-height:1.25;font-weight:600}
+.qit{margin-top:6px;color:var(--muted);font-size:15px}
+.play{flex:none;width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+@media (prefers-color-scheme:dark){.play{color:#14171f}}
+.play.sm{width:32px;height:32px;font-size:13px}
+.play.ghost{background:var(--blue-soft);color:var(--blue)}
+.row{display:flex;gap:12px;align-items:flex-start}
+.row .grow{flex:1;min-width:0}
+.starter{background:var(--amber-soft);border-radius:14px;padding:12px 14px;font-weight:500}
+.starter b{color:var(--amber)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:14px;text-align:left}
+.chip span{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.chip.got{background:var(--green-soft);color:var(--green)}
+.sent{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
+.sent:last-child{border-bottom:0}
+.sent .t{flex:1;font-size:17px}
+.sent .step{flex:none;font-size:12px;font-weight:700;color:var(--coral);background:var(--coral-soft);border-radius:8px;padding:3px 7px;margin-top:3px}
+.hidden-text .t{filter:blur(6px);user-select:none}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sw{width:48px;height:28px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:.2s}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on{background:var(--blue)}.sw.on::after{left:23px}
+.word{display:flex;align-items:center;gap:10px;padding:8px 0}
+.word b{font-size:16px}
+.word .pr{font-size:14px;color:var(--coral);font-weight:700}
+details summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:'＋';color:var(--muted)}
+details[open] summary::after{content:'－'}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:16px;font-weight:700;font-size:16px;background:var(--blue);color:#fff}
+@media (prefers-color-scheme:dark){.btn{color:#14171f}}
+.btn.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn+.btn{margin-top:10px}
+.pager{display:flex;gap:10px;margin-top:6px}
+.pager .btn{margin:0}
+.rate{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.rate button{padding:12px 4px;border-radius:14px;font-weight:700;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rate .e{font-size:26px}
+.r1{background:var(--coral-soft);color:var(--coral)}.r2{background:var(--amber-soft);color:var(--amber)}.r3{background:var(--green-soft);color:var(--green)}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick button{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:14px}
+.pick button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hero{padding:6px 2px 2px}
+.hero h2{font-size:26px;line-height:1.15}
+.steps3{counter-reset:s;margin:0;padding:0;list-style:none}
+.steps3 li{counter-increment:s;display:flex;gap:12px;padding:8px 0}
+.steps3 li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--coral);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ph{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.ph:last-child{border-bottom:0}
+.ph .grow b{display:block;font-weight:500}
+.ph .grow span{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue)}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;max-width:90%;z-index:9}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.reveal{animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.center{text-align:center}
+.big-emoji{font-size:48px}
+.speaking{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <button class="back" id="back" aria-label="Indietro">←</button>
+  <h1 id="title">English Oral Coach</h1>
+  <button class="speed" id="speed">🐢 Lenta</button>
+</header>
+<main id="view"></main>
+<nav>
+  <button data-tab="study" class="on"><span class="ic">📚</span>Studia</button>
+  <button data-tab="quiz"><span class="ic">🎤</span>Interrogami</button>
+  <button data-tab="phrases"><span class="ic">💬</span>Frasi utili</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= CONTENUTI ================= */
+const TOPICS = [
+{ id:"printers", icon:"🖨️", title:"Printing Technologies", it:"Stampanti: inkjet, laser e 3D", qs:[
+ {q:"What are the two main categories of computer printers?", it:"Quali sono le due principali categorie di stampanti?",
+  start:"The two main categories are … and …",
+  key:[["inkjet printer","stampante a getto d'inchiostro"],["laser printer","stampante laser"],["tiny dots of ink","minuscole gocce d'inchiostro"],["laser beam","raggio laser"],["toner","toner (polvere)"],["sharper","più nitido"]],
+  say:["The two main categories of printers are inkjet printers and laser printers.","Inkjet printers put tiny dots of ink onto the paper.","Laser printers use a laser beam and toner, so the text and graphics are sharper."],
+  full:"The two main categories of computer printers are inkjet printers and laser printers. Inkjet printers transfer tiny dots of ink onto paper, while laser printers use a laser beam and toner to create sharper text and graphics.",
+  words:[["inkjet","ÌNK-gièt"],["toner","TÓU-ner"],["sharper","SCIÀR-per"],["graphics","GRÀ-fiks"]]},
+ {q:"How does a laser printer apply toner to the paper?", it:"Come fa una stampante laser ad applicare il toner sulla carta?",
+  start:"First … Then … Finally …",
+  key:[["laser beam","raggio laser"],["electrostatic charge","carica elettrostatica"],["light-sensitive drum","tamburo fotosensibile"],["toner particles","particelle di toner"],["heat","calore"],["melts","fonde"]],
+  say:["First, a laser beam creates an electrostatic charge on a light-sensitive drum.","Then, the toner particles stick to the areas drawn by the laser.","Finally, heat melts the toner onto the paper."],
+  full:"A laser beam creates an electrostatic charge on a light-sensitive drum. Positively charged toner particles attach to the discharged areas created by the laser, and heat then melts the toner onto the paper.",
+  words:[["drum","DRAM"],["electrostatic","i-lec-tro-STÀ-tic"],["particles","PÀR-ti-cols"],["heat","HÌIT"]]},
+ {q:"What does the abbreviation MFP stand for in printing technology?", it:"Cosa significa la sigla MFP?",
+  start:"MFP stands for …",
+  key:[["Multifunction Printer","stampante multifunzione"],["printing","stampare"],["copying","copiare"],["scanning","scansionare"],["faxing","inviare fax"],["single machine","un'unica macchina"]],
+  say:["MFP stands for Multifunction Printer.","It is one machine that can print, copy, scan and send faxes.","So it combines four functions in a single device."],
+  full:"MFP stands for Multifunction Printer. These devices combine printing, copying, scanning, and faxing capabilities into a single machine.",
+  words:[["multifunction","mal-ti-FÀNK-scion"],["scanning","SKÈ-ning"],["device","di-VÀIS"],["machine","ma-SCÌIN"]]},
+ {q:"What is 3D printing and how does it create objects?", it:"Cos'è la stampa 3D e come crea gli oggetti?",
+  start:"3D printing is … It works by …",
+  key:[["additive manufacturing","produzione additiva"],["three-dimensional object","oggetto tridimensionale"],["digital model","modello digitale"],["layer by layer","strato dopo strato"],["plastic, metal, ceramics","plastica, metallo, ceramica"]],
+  say:["3D printing is also called additive manufacturing.","It creates a solid object from a digital model.","The printer builds the object layer by layer, using plastic, metal or ceramics."],
+  full:"3D printing, also known as additive manufacturing, creates three-dimensional solid objects from a digital model by building them layer by layer using materials like plastic, metal, or ceramics.",
+  words:[["layer","LÈI-er"],["manufacturing","ma-niu-FÀC-cia-ring"],["ceramics","se-RÀ-miks"],["three-dimensional","thrii-dai-MÈN-scio-nal"]]},
+ {q:"Why is print resolution measured in DPI?", it:"Perché la risoluzione di stampa si misura in DPI?",
+  start:"It is measured in DPI because … The higher …, the better …",
+  key:[["dots per inch","punti per pollice"],["resolution","risoluzione"],["smaller, denser dots","punti più piccoli e fitti"],["crisp text","testo nitido"],["finer detail","dettagli più fini"],["print quality","qualità di stampa"]],
+  say:["Print resolution is measured in DPI, which means dots per inch.","A higher DPI means smaller and denser dots.","So the text is crisp and the print quality is higher."],
+  full:"Print resolution is measured in dots per inch (DPI). A higher DPI means smaller, denser dots of ink or toner, resulting in crisp text, finer detail, and higher overall print quality.",
+  words:[["inch","ÌNC"],["resolution","re-zo-LÙ-scion"],["denser","DÈN-ser"],["measured","MÈ-giurd"]]}
+]},
+{ id:"hardware", icon:"💻", title:"Computer Hardware & Memory", it:"Hardware, memoria e periferiche", qs:[
+ {q:"What is the main difference between RAM and hard disk storage?", it:"Qual è la differenza principale tra RAM e hard disk?",
+  start:"The main difference is that … while …",
+  key:[["temporary","temporanea"],["volatile","volatile (si cancella)"],["active programs","programmi in uso"],["CPU","processore"],["permanent","permanente"],["non-volatile","non volatile"]],
+  say:["RAM is temporary memory: it is volatile, so it loses data when the computer is off.","It holds the data and programs the CPU is using right now.","A hard disk, instead, is permanent, non-volatile storage for files and software."],
+  full:"RAM provides temporary, volatile storage for data and active programs currently in use by the CPU, whereas a hard disk provides permanent, non-volatile storage for files and software.",
+  words:[["volatile","VÒ-la-tail"],["storage","STÒ-rig"],["temporary","TÈM-po-re-ri"],["whereas","uèr-ÀS"]]},
+ {q:"Which computer components act as input devices?", it:"Quali componenti sono dispositivi di input?",
+  start:"Input devices are … For example …",
+  key:[["feed data and commands","inviano dati e comandi"],["keyboard","tastiera"],["mouse","mouse"],["microphone","microfono"],["webcam","webcam"],["scanner","scanner"],["trackball, light pen","trackball, penna ottica"]],
+  say:["Input devices send data and commands into the computer.","Common examples are the keyboard, the mouse and the microphone.","Other examples are webcams, scanners, trackballs and light pens."],
+  full:"Input devices feed data and commands into the computer. Common examples include keyboards, mice, trackballs, light pens, webcams, microphones, and scanners.",
+  words:[["keyboard","KÌI-bord"],["microphone","MÀI-cro-foun"],["mice","MÀIS (plurale di mouse)"],["device","di-VÀIS"]]},
+ {q:"What function does the motherboard serve in a computer system?", it:"Che funzione ha la scheda madre?",
+  start:"The motherboard is … It connects …",
+  key:[["main printed circuit board","circuito stampato principale"],["connects","collega"],["communication","comunicazione"],["CPU, RAM","processore, RAM"],["expansion slots","slot di espansione"],["storage drives","unità di memoria"]],
+  say:["The motherboard is the main printed circuit board of the computer.","It connects all the key components, so they can communicate.","For example the CPU, the RAM, the expansion slots and the storage drives."],
+  full:"The motherboard is the main printed circuit board that unites and allows communication between key hardware components, including the CPU, RAM, expansion slots, and storage drives.",
+  words:[["motherboard","MÀ-dher-bord"],["circuit","SÈR-kit"],["component","com-PÒU-nent"],["expansion","ek-SPÈN-scion"]]},
+ {q:"How does an optical mouse differ from traditional mechanical mice?", it:"In cosa è diverso il mouse ottico da quello meccanico?",
+  start:"The main difference is that an optical mouse has no …",
+  key:[["no moving parts","nessuna parte mobile"],["tiny camera","piccola telecamera"],["light sensor","sensore di luce"],["LED or laser light","luce LED o laser"],["surface","superficie"],["tracks movement","rileva il movimento"]],
+  say:["An optical mouse has no moving mechanical parts.","It uses a tiny camera, a light sensor and an LED or laser light.","The light shines on the surface, and the sensor tracks the movement."],
+  full:"An optical mouse has no moving mechanical parts. Instead, it tracks movement using a tiny camera, light sensor, and LED or laser light projected onto the surface beneath it.",
+  words:[["optical","ÒP-ti-cal"],["mechanical","me-KÈ-ni-cal"],["surface","SÈR-fis"],["sensor","SÈN-ser"]]},
+ {q:"What do CPU and MHz stand for in computer specifications?", it:"Cosa significano CPU e MHz?",
+  start:"CPU stands for … and MHz stands for …",
+  key:[["Central Processing Unit","unità di elaborazione centrale"],["executes instructions","esegue le istruzioni"],["Megahertz","megahertz"],["clock speed","velocità di clock"],["millions of cycles per second","milioni di cicli al secondo"]],
+  say:["CPU stands for Central Processing Unit: it executes the program instructions.","MHz stands for Megahertz.","It measures the clock speed of the processor, in millions of cycles per second."],
+  full:"CPU stands for Central Processing Unit, which executes program instructions. Megahertz (MHz) measures the processor's clock speed, indicating millions of cycles per second.",
+  words:[["processing","PRÒ-ses-sing"],["megahertz","MÈ-ga-herts"],["cycles","SÀI-cols"],["executes","ÈK-se-kiuts"]]}
+]},
+{ id:"oled", icon:"📱", title:"Display Technologies (LCD vs OLED)", it:"Schermi: LCD e OLED", qs:[
+ {q:"What does the acronym OLED stand for?", it:"Cosa significa la sigla OLED?",
+  start:"OLED stands for … It is a technology that …",
+  key:[["Organic Light Emitting Diode","diodo organico a emissione di luce"],["organic molecules","molecole organiche"],["emit light","emettono luce"],["electric current","corrente elettrica"]],
+  say:["OLED stands for Organic Light Emitting Diode.","It is a display technology based on organic molecules.","These molecules emit light when an electric current passes through them."],
+  full:"OLED stands for Organic Light Emitting Diode. It is a display technology that uses organic molecules that emit light when an electric current passes through them.",
+  words:[["organic","or-GHÈ-nic"],["diode","DÀI-oud"],["emitting","i-MÌT-ting"],["molecules","MÒ-le-kiuls"]]},
+ {q:"Why do OLED screens not require backlighting like conventional LCDs?", it:"Perché gli OLED non hanno bisogno della retroilluminazione come gli LCD?",
+  start:"Because … So …",
+  key:[["pixels produce their own light","i pixel producono luce propria"],["electroluminescence","elettroluminescenza"],["backlight panel","pannello di retroilluminazione"],["LCD","schermo LCD"]],
+  say:["Because OLED pixels produce their own light.","This process is called electroluminescence.","An LCD needs a separate backlight behind the screen, but an OLED does not."],
+  full:"Unlike LCD monitors, OLED pixels produce their own light through electroluminescence. Therefore, OLED displays do not require a separate backlight panel behind the screen.",
+  words:[["backlight","BÈK-lait"],["electroluminescence","i-lec-tro-lu-mi-NÈS-sens"],["pixel","PÌK-sel"],["therefore","DHÈR-for"]]},
+ {q:"What are the key performance advantages of OLED displays?", it:"Quali sono i vantaggi principali degli schermi OLED?",
+  start:"The main advantages are … Moreover …",
+  key:[["lighter","più leggeri"],["higher contrast","contrasto maggiore"],["faster refresh rates","aggiornamento più veloce"],["lower power consumption","consumano meno"],["wider viewing angles","angoli di visione più ampi"],["flexible","flessibili"]],
+  say:["OLED displays are lighter and have higher contrast.","They also have faster refresh rates and use less power.","Moreover, they have wider viewing angles and they can be flexible."],
+  full:"OLED displays offer lighter weight, higher contrast, faster refresh rates, lower power consumption, wider viewing angles, and physical flexibility compared to standard LCD screens.",
+  words:[["contrast","CÒN-trast"],["consumption","con-SÀMP-scion"],["angles","ÈN-gols"],["flexible","FLÈK-si-bol"]]},
+ {q:"What is a main disadvantage or drawback of current OLED screens?", it:"Qual è uno svantaggio degli schermi OLED?",
+  start:"The main disadvantage is that … Also …",
+  key:[["blue emitters degrade faster","il blu si degrada prima"],["color shift","i colori cambiano"],["over time","col tempo"],["water damage","danni dall'acqua"],["cost more","costano di più"]],
+  say:["The main problem is that blue emitters degrade faster than red and green ones.","So, over time, the colours change.","OLEDs can also be damaged by water, and they cost more to make."],
+  full:"Blue organic light emitters degrade faster than red and green ones, leading to color shift over time. OLEDs are also vulnerable to water damage and cost more to manufacture.",
+  words:[["degrade","di-GRÈID"],["damage","DÈ-mig"],["vulnerable","VÀL-ne-ra-bol"],["drawback","DRÒ-bek"]]},
+ {q:"What future applications are made possible by OLED technology?", it:"Quali applicazioni future rende possibili l'OLED?",
+  start:"OLED makes … possible. For example …",
+  key:[["flexible curved displays","schermi curvi flessibili"],["rollable screens","schermi arrotolabili"],["foldable devices","dispositivi pieghevoli"],["wearable displays","schermi indossabili"],["clothing","vestiti"],["transparent smart windows","finestre intelligenti trasparenti"]],
+  say:["OLED technology makes many new products possible.","For example, curved, rollable and foldable screens.","We could also have wearable displays in our clothes and transparent smart windows."],
+  full:"Future applications include flexible curved displays, rollable screens, wearable displays integrated into clothing, transparent smart windows, and foldable mobile devices.",
+  words:[["rollable","RÒU-la-bol"],["wearable","UÈ-ra-bol"],["foldable","FÒUL-da-bol"],["clothing","CLÒU-dhing"]]}
+]},
+{ id:"os", icon:"⚙️", title:"Operating Systems", it:"Sistemi operativi, boot e algoritmi", qs:[
+ {q:"What is an operating system (OS) and why is it essential?", it:"Cos'è un sistema operativo e perché è essenziale?",
+  start:"An operating system is … It is essential because …",
+  key:[["system software","software di sistema"],["manages hardware","gestisce l'hardware"],["memory and files","memoria e file"],["input/output","ingresso/uscita"],["interface","interfaccia"],["users and applications","utenti e applicazioni"]],
+  say:["An operating system is the main system software of a computer.","It manages the hardware, the memory, the files and input and output.","It is essential because it gives an interface to users and to applications."],
+  full:"An operating system is core system software that manages hardware resources, memory, files, and input/output operations, while providing an interface for users and application software.",
+  words:[["operating","Ò-pe-rei-ting"],["interface","ÌN-ter-feis"],["essential","i-SÈN-scial"],["software","SÒFT-uer"]]},
+ {q:"What happens during the boot-up process of a personal computer?", it:"Cosa succede durante l'avvio (boot) del computer?",
+  start:"First … Then … Finally …",
+  key:[["POST check","test di autodiagnosi (Power-On Self-Test)"],["ROM","memoria di sola lettura"],["bootstrap loader","programma di caricamento"],["OS files","file del sistema operativo"],["from storage into RAM","dalla memoria alla RAM"]],
+  say:["First, the computer runs a POST check from the ROM.","Then, it runs the bootstrap loader.","Finally, it copies the operating system files from storage into RAM, and the PC starts."],
+  full:"When turned on, the computer runs a POST check from ROM, executes the bootstrap loader, and copies essential operating system files from storage into RAM to start up the PC.",
+  words:[["bootstrap","BÙUT-strap"],["loader","LÒU-der"],["POST","POUST"],["process","PRÒU-ses"]]},
+ {q:"What key features characterize the Android operating system?", it:"Quali sono le caratteristiche principali di Android?",
+  start:"Android is … Its main features are …",
+  key:[["mobile OS","sistema operativo per smartphone"],["Google","Google"],["open-source","codice aperto"],["Linux-based","basato su Linux"],["Open Handset Alliance","consorzio di aziende"],["customizable","personalizzabile"],["Google Play","negozio di app"]],
+  say:["Android is a mobile operating system developed by Google and the Open Handset Alliance.","It is open-source and based on Linux.","It has a customizable interface and gives access to the apps on Google Play."],
+  full:"Android is an open-source, Linux-based mobile OS developed by Google and the Open Handset Alliance, featuring customizable interfaces and access to Google Play apps.",
+  words:[["Linux","LÌ-nucs"],["customizable","CÀ-sto-mai-za-bol"],["alliance","a-LÀI-ens"],["developed","di-VÈ-lopt"]]},
+ {q:"What are the fundamental characteristics of a valid algorithm?", it:"Quali caratteristiche deve avere un algoritmo valido?",
+  start:"An algorithm is … A valid algorithm must have …",
+  key:[["sequence of precise instructions","sequenza di istruzioni precise"],["clear starting point","inizio chiaro"],["unambiguous steps","passi non ambigui"],["at least one end","almeno una fine"],["predictable result","risultato prevedibile"]],
+  say:["An algorithm is a sequence of precise instructions.","It must have a clear start, clear steps and at least one end.","And it must always give a predictable result."],
+  full:"An algorithm is a sequence of precise instructions that has a clear starting point, unambiguous steps, at least one defined terminator (end), and produces a predictable result.",
+  words:[["algorithm","ÈL-go-ri-dhm"],["sequence","SÌI-kuens"],["unambiguous","an-em-BÌ-ghiu-us"],["predictable","pri-DÌK-ta-bol"]]},
+ {q:"What is the primary difference between a GUI and a CLI?", it:"Qual è la differenza tra GUI e CLI?",
+  start:"GUI stands for … CLI stands for … The difference is that …",
+  key:[["Graphical User Interface","interfaccia grafica"],["icons and windows","icone e finestre"],["mouse pointer","puntatore del mouse"],["Command Line Interface","interfaccia a riga di comando"],["type text commands","scrivere comandi testuali"]],
+  say:["GUI means Graphical User Interface; CLI means Command Line Interface.","With a GUI you use icons, windows and the mouse pointer.","With a CLI, instead, you must type text commands."],
+  full:"A Graphical User Interface (GUI) allows users to interact using visual icons, windows, and mouse pointers, whereas a Command Line Interface (CLI) requires typing text commands.",
+  words:[["graphical","GRÈ-fi-cal"],["command","co-MÀND"],["icons","ÀI-cons"],["pointer","PÒIN-ter"]]}
+]},
+{ id:"multi", icon:"🧠", title:"Software & Multitasking", it:"Multitasking, memoria virtuale, software", qs:[
+ {q:"What is computer multitasking?", it:"Cos'è il multitasking?",
+  start:"Multitasking is the ability of … to …",
+  key:[["operating system","sistema operativo"],["multiple programs","più programmi"],["at the same time / concurrently","contemporaneamente"],["shares processor time","divide il tempo del processore"],["time slices","piccoli intervalli di tempo"]],
+  say:["Multitasking is the ability of an operating system to run many programs at the same time.","The OS shares the processor time between the active programs.","Each program gets small time slices."],
+  full:"Multitasking is the ability of an operating system to execute multiple programs concurrently by sharing processor time slices between active applications.",
+  words:[["multitasking","mal-ti-TÀS-king"],["concurrently","con-CÀ-rent-li"],["slices","SLÀI-sis"],["processor","PRÒU-ses-ser"]]},
+ {q:"How does pre-emptive multitasking differ from cooperative multitasking?", it:"Che differenza c'è tra multitasking preemptive e cooperativo?",
+  start:"In pre-emptive multitasking … In cooperative multitasking, instead, …",
+  key:[["OS controls processor time","il SO controlla il processore"],["forces applications to yield","obbliga i programmi a cedere"],["malfunctioning program","programma difettoso"],["lock up the system","bloccare il sistema"],["programs give back control","i programmi restituiscono il controllo"]],
+  say:["In pre-emptive multitasking the operating system controls the processor time.","It forces the programs to stop and give the processor to other programs, so a broken program cannot lock up the system.","In cooperative multitasking, instead, each program decides when to give back control."],
+  full:"In pre-emptive multitasking, the OS controls processor time and forces applications to yield execution, preventing a malfunctioning program from locking up the system.",
+  words:[["pre-emptive","pri-ÈMP-tiv"],["cooperative","co-Ò-pe-ra-tiv"],["yield","IÌLD"],["malfunctioning","mal-FÀNK-scio-ning"]]},
+ {q:"What is virtual memory and how does swapping work?", it:"Cos'è la memoria virtuale e come funziona lo swapping?",
+  start:"Virtual memory is … Swapping means …",
+  key:[["hard drive space","spazio sull'hard disk"],["extra RAM","RAM aggiuntiva"],["swapping","scambio"],["unused memory","memoria non usata"],["from RAM to disk and back","dalla RAM al disco e ritorno"],["large programs","programmi grandi"]],
+  say:["Virtual memory uses space on the hard drive as extra RAM.","Swapping means moving unused data from RAM to the disk, and back when it is needed.","In this way, large programs can run smoothly."],
+  full:"Virtual memory uses hard drive space as extra RAM. Swapping moves unused memory contents from RAM to disk and back as needed, allowing large programs to run smoothly.",
+  words:[["virtual","VÈR-ciu-al"],["swapping","SUÒ-ping"],["smoothly","SMÙUDH-li"],["unused","an-IÙSD"]]},
+ {q:"What is the main difference between system software and application software?", it:"Che differenza c'è tra software di sistema e software applicativo?",
+  start:"The main difference is that … while …",
+  key:[["system software","software di sistema"],["the OS","il sistema operativo"],["manages hardware","gestisce l'hardware"],["application software","software applicativo"],["specific tasks","compiti specifici"],["word processors, browsers","videoscrittura, browser"]],
+  say:["System software, like the operating system, manages the hardware and the system.","Application software, instead, helps users do specific tasks.","For example, word processors and web browsers are applications."],
+  full:"System software (like the OS) manages hardware and system operations, while application software (like word processors or browsers) helps users perform specific end-user tasks.",
+  words:[["application","a-pli-KÈI-scion"],["browser","BRÀU-ser"],["perform","per-FÒRM"],["tasks","TÀSKS"]]},
+ {q:"What role do conditional sentences play in programming languages?", it:"Che ruolo hanno le istruzioni condizionali nella programmazione?",
+  start:"Conditional statements are … They allow a program to …",
+  key:[["IF-THEN rules","regole SE-ALLORA"],["evaluate logic","valutare la logica"],["cause and effect","causa ed effetto"],["execute code","eseguire codice"],["condition","condizione"]],
+  say:["Conditional statements are rules like IF … THEN …","They let a program evaluate a condition, like cause and effect.","If the condition is true, the program executes a specific block of code."],
+  full:"Conditional statements (like IF-THEN rules) allow programs to evaluate logic, express cause-and-effect relationships, and execute specific code blocks based on specified conditions.",
+  words:[["conditional","con-DÌ-scio-nal"],["statement","STÈIT-ment"],["evaluate","i-VÈ-liu-eit"],["execute","ÈK-se-kiut"]]}
+]}
+];
+
+const PHRASES = [
+ {t:"Per iniziare la risposta", items:[
+  ["Well, …","Allora, … (ti dà un secondo per pensare)"],
+  ["Basically, …","In pratica, …"],
+  ["X is a … that …","X è un … che … (per le definizioni)"],
+  ["X stands for …","X significa … (per le sigle)"],
+  ["The main difference is that …","La differenza principale è che …"]]},
+ {t:"Per prendere tempo (senza stress!)", items:[
+  ["Let me think for a second.","Fammi pensare un attimo."],
+  ["That's a good question.","Bella domanda."],
+  ["How can I say it…","Come posso dire…"],
+  ["Could you repeat the question, please?","Può ripetere la domanda, per favore?"]]},
+ {t:"Per collegare le idee", items:[
+  ["First, … Then, … Finally, …","Prima… Poi… Infine… (per i processi)"],
+  ["Also, … / Moreover, …","Inoltre, …"],
+  ["…, while … / …, instead, …","…, mentre … / …, invece, …"],
+  ["For example, …","Per esempio, …"],
+  ["So, … / That's why …","Quindi … / Per questo …"],
+  ["Because …","Perché …"]]},
+ {t:"Se non ricordi una parola", items:[
+  ["I don't remember the exact word, but …","Non ricordo la parola esatta, ma …"],
+  ["It's a kind of …","È una specie di …"],
+  ["In other words, …","In altre parole, …"]]},
+ {t:"Per chiudere", items:[
+  ["To sum up, …","Per riassumere, …"],
+  ["That's the main idea.","Questa è l'idea principale."],
+  ["In short, …","In breve, …"]]}
+];
+
+/* ================= STATO ================= */
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let scores = store.get("eoc_scores",{});   // id -> 1..3
+let slow = store.get("eoc_slow",true);
+const qid=(t,i)=>t+"_"+i;
+
+/* ================= AUDIO ================= */
+let voice=null;
+function pickVoice(){
+  if(!("speechSynthesis" in window))return;
+  const vs=speechSynthesis.getVoices();
+  voice = vs.find(v=>/en-GB/i.test(v.lang)&&/female|Kate|Serena|Daniel|Google UK/i.test(v.name))
+       || vs.find(v=>/en-GB/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+let speakingBtn=null;
+function speak(text,btn){
+  if(!("speechSynthesis" in window)){toast("Audio non disponibile su questo dispositivo");return}
+  try{
+    speechSynthesis.cancel();
+    if(speakingBtn)speakingBtn.classList.remove("speaking");
+    const u=new SpeechSynthesisUtterance(text.replace(/…/g,", "));
+    u.lang="en-GB"; if(voice)u.voice=voice;
+    u.rate=slow?0.78:0.98;
+    if(btn){btn.classList.add("speaking");speakingBtn=btn;u.onend=u.onerror=()=>btn.classList.remove("speaking")}
+    speechSynthesis.speak(u);
+  }catch(e){toast("Audio non disponibile")}
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
+
+/* ================= UI HELPERS ================= */
+const $view=document.getElementById("view");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const playBtn=(text,cls="")=>`<button class="play ${cls}" data-say="${esc(text)}" aria-label="Ascolta">▶</button>`;
+let tab="study", stack=[];
+function setHeader(title,canBack){
+  document.getElementById("title").textContent=title;
+  document.getElementById("back").classList.toggle("show",!!canBack);
+}
+function topicProgress(t){
+  const n=t.qs.length; let s=0;
+  t.qs.forEach((_,i)=>{const v=scores[qid(t.id,i)]; if(v===3)s+=1; else if(v===2)s+=.5});
+  return Math.round(s/n*100);
+}
+function updSpeed(){document.getElementById("speed").textContent=slow?"🐢 Lenta":"🐇 Normale"}
+
+/* ================= VISTA: STUDIA ================= */
+function viewStudy(){
+  setHeader("English Oral Coach",false);
+  let h=`<div class="hero"><h2>Non a memoria.<br>Con un metodo.</h2>
+  <p class="muted">Per ogni domanda impari <b>come iniziare</b>, le <b>parole chiave</b> e <b>3 frasi semplici</b>. Ascolta, ripeti ad alta voce, poi fatti interrogare.</p></div>
+  <div class="card"><details><summary>🎯 Come impostare ogni risposta</summary>
+  <ol class="steps3" style="margin-top:10px">
+   <li><div><b>Riprendi la domanda.</b><br><span class="muted small">"What is an OS?" → "An operating system is…". Così parti subito, senza bloccarti.</span></div></li>
+   <li><div><b>Usa 2–3 parole chiave.</b><br><span class="muted small">Non serve la frase del libro: bastano le parole giuste in frasi corte.</span></div></li>
+   <li><div><b>Chiudi con un esempio o un "so…".</b><br><span class="muted small">"For example…" oppure "So, …". Una frase e hai finito.</span></div></li>
+  </ol>
+  <p class="small muted" style="margin:6px 0 0">Frasi corte = meno errori. Soggetto + verbo + cosa. Va benissimo!</p>
+  </details></div>
+  <p class="label" style="margin-top:20px">Argomenti</p>`;
+  TOPICS.forEach((t,ti)=>{
+    const p=topicProgress(t);
+    h+=`<div class="card"><button class="topic" data-topic="${ti}">
+      <div class="num">${t.icon}</div>
+      <div style="flex:1;min-width:0"><h3>${esc(t.title)}</h3><div class="muted small">${esc(t.it)} · ${t.qs.length} domande</div>
+      <div class="bar"><i style="width:${p}%"></i></div></div></button></div>`;
+  });
+  $view.innerHTML=h;
+}
+function viewTopic(ti){
+  const t=TOPICS[ti];
+  setHeader(t.title,true);
+  let h=`<p class="muted" style="margin:8px 2px">${t.icon} ${esc(t.it)}</p><div class="card" style="padding:4px 12px">`;
+  t.qs.forEach((q,i)=>{
+    const s=scores[qid(t.id,i)]||0;
+    h+=`<button class="qrow" data-q="${ti},${i}"><span class="n">${i+1}</span>
+      <span style="flex:1"><b style="font-weight:500">${esc(q.q)}</b><br><span class="muted small">${esc(q.it)}</span></span>
+      <span class="dot s${s}"></span></button>`;
+  });
+  h+=`</div><button class="btn" data-quiztopic="${ti}">🎤 Interrogami su questo argomento</button>
+  <p class="small muted center" style="margin-top:10px">Pallino: 🟢 la so · 🟠 quasi · 🔴 da ripassare</p>`;
+  $view.innerHTML=h;
+}
+let hideSent=false;
+function viewQuestion(ti,i){
+  const t=TOPICS[ti], q=t.qs[i];
+  setHeader(`${t.icon} Domanda ${i+1} di ${t.qs.length}`,true);
+  const all=q.say.join(" ");
+  let h=`<div class="card"><div class="row"><div class="grow"><div class="qbig">${esc(q.q)}</div><div class="qit">🇮🇹 ${esc(q.it)}</div></div>${playBtn(q.q)}</div></div>
+
+  <div class="card"><p class="label">① Come iniziare</p>
+   <div class="row"><div class="starter grow">${esc(q.start)}</div>${playBtn(q.start,"sm ghost")}</div></div>
+
+  <div class="card"><p class="label">② Parole chiave (tocca per ascoltare)</p><div class="chips">
+   ${q.key.map(k=>`<button class="chip" data-say="${esc(k[0])}">${esc(k[0])}<span>${esc(k[1])}</span></button>`).join("")}
+  </div></div>
+
+  <div class="card ${hideSent?"hidden-text":""}" id="sentCard">
+   <div class="row" style="align-items:center;margin-bottom:4px"><p class="label grow" style="margin:0">③ La risposta in 3 frasi</p>${playBtn(all,"sm")}</div>
+   ${q.say.map((s,k)=>`<div class="sent"><span class="step">${k+1}</span><span class="t">${esc(s)}</span>${playBtn(s,"sm ghost")}</div>`).join("")}
+   <div class="toggle" style="margin-top:12px"><span class="small"><b>Modalità allenamento</b><br><span class="muted">Nascondi le frasi e prova a dirle tu</span></span><button class="sw ${hideSent?"on":""}" id="hideSw" aria-label="Nascondi frasi"></button></div>
+  </div>
+
+  <div class="card"><p class="label">🗣️ Pronuncia delle parole difficili</p>
+   ${q.words.map(w=>`<div class="word">${playBtn(w[0],"sm ghost")}<div><b>${esc(w[0])}</b> · <span class="pr">${esc(w[1])}</span></div></div>`).join("")}
+   <p class="small muted" style="margin:6px 0 0">Le MAIUSCOLE con accento indicano la sillaba da "spingere". Ascolta sempre l'audio per il suono vero.</p>
+  </div>
+
+  <div class="card"><details><summary>📖 Risposta completa (dal tuo PDF)</summary>
+   <div class="row" style="margin-top:10px"><p class="grow" style="margin:0">${esc(q.full)}</p>${playBtn(q.full,"sm ghost")}</div>
+   <p class="small muted">Non serve impararla parola per parola: le 3 frasi sopra dicono le stesse cose, in modo più semplice.</p>
+  </details></div>
+
+  <div class="pager">
+   <button class="btn alt" data-q="${ti},${i-1}" ${i===0?"disabled style='opacity:.4'":""}>← Prima</button>
+   <button class="btn" data-q="${ti},${i+1}" ${i===t.qs.length-1?"disabled style='opacity:.4'":""}>Dopo →</button>
+  </div>`;
+  $view.innerHTML=h;
+  document.getElementById("hideSw").onclick=e=>{
+    hideSent=!hideSent; e.currentTarget.classList.toggle("on",hideSent);
+    document.getElementById("sentCard").classList.toggle("hidden-text",hideSent);
+    toast(hideSent?"Prova a dire le 3 frasi ad alta voce 💪":"Frasi visibili");
+  };
+}
+
+/* ================= VISTA: INTERROGAMI ================= */
+let quizSel=store.get("eoc_quizsel","all");
+let quiz=null;
+function viewQuizHome(){
+  setHeader("Interrogami",false);
+  let h=`<div class="hero"><h2>Simula l'interrogazione</h2>
+  <p class="muted">Ascolti la domanda, rispondi <b>ad alta voce</b> e poi controlli. Se ti blocchi, chiedi un aiutino: è normale!</p></div>
+  <div class="card"><p class="label">Su cosa?</p><div class="pick">
+   <button data-sel="all" class="${quizSel==="all"?"on":""}">🎲 Tutto</button>
+   ${TOPICS.map((t,ti)=>`<button data-sel="${ti}" class="${String(quizSel)===String(ti)?"on":""}">${t.icon} ${esc(t.title.split(" ")[0])}</button>`).join("")}
+   <button data-sel="weak" class="${quizSel==="weak"?"on":""}">🔴 Solo da ripassare</button>
+  </div></div>
+  <div class="card"><p class="label">Come funziona</p>
+   <ol class="steps3"><li><div>Ascolta la domanda del "prof".</div></li>
+   <li><div>Rispondi a voce: <b>inizio + parole chiave + esempio</b>.</div></li>
+   <li><div>Controlla le parole chiave che hai detto e valutati.</div></li></ol>
+   <p class="small muted" style="margin:4px 0 0">Le domande che sai meno tornano più spesso.</p></div>
+  <button class="btn" id="startQuiz">▶ Inizia (5 domande)</button>`;
+  $view.innerHTML=h;
+}
+function poolFor(sel){
+  let p=[];
+  TOPICS.forEach((t,ti)=>t.qs.forEach((_,i)=>{
+    if(sel==="all"||String(sel)===String(ti)||(sel==="weak"&&(scores[qid(t.id,i)]||0)<3&&scores[qid(t.id,i)]))p.push([ti,i]);
+  }));
+  return p;
+}
+function weightedPick(pool,n){
+  const items=pool.map(x=>{const s=scores[qid(TOPICS[x[0]].id,x[1])]||0; return {x,w:s===3?1:s===2?3:s===1?5:4}});
+  const out=[];
+  while(out.length<n&&items.length){
+    const tot=items.reduce((a,b)=>a+b.w,0); let r=Math.random()*tot, k=0;
+    for(;k<items.length;k++){r-=items[k].w;if(r<=0)break}
+    out.push(items.splice(Math.min(k,items.length-1),1)[0].x);
+  }
+  return out;
+}
+function startQuiz(){
+  let pool=poolFor(quizSel);
+  if(!pool.length){toast(quizSel==="weak"?"Nessuna domanda da ripassare: ottimo! 🎉":"Nessuna domanda");return}
+  quiz={list:weightedPick(pool,5),pos:0,stage:0,got:new Set(),res:[]};
+  viewQuizQ();
+}
+function viewQuizQ(){
+  const [ti,i]=quiz.list[quiz.pos], t=TOPICS[ti], q=t.qs[i];
+  setHeader(`Domanda ${quiz.pos+1} di ${quiz.list.length}`,true);
+  const st=quiz.stage;
+  let h=`<div class="bar" style="margin-top:6px"><i style="width:${quiz.pos/quiz.list.length*100}%;background:var(--blue)"></i></div>
+  <div class="card"><span class="tag">${t.icon} ${esc(t.title)}</span>
+   <div class="row" style="margin-top:10px"><div class="qbig grow">${esc(q.q)}</div>${playBtn(q.q)}</div>
+   <div class="qit">🇮🇹 ${esc(q.it)}</div></div>`;
+  if(st===0){
+    h+=`<div class="card center"><div class="big-emoji">🗣️</div><p style="margin:6px 0 0"><b>Ora rispondi ad alta voce.</b><br><span class="muted small">Ricorda: riprendi la domanda, poi 2–3 parole chiave.</span></p></div>
+    <button class="btn alt" data-stage="1">💡 Aiutino: come inizio?</button>
+    <button class="btn" data-stage="3">✅ Ho risposto, fammi controllare</button>`;
+  }
+  if(st>=1){
+    h+=`<div class="card reveal"><p class="label">Come iniziare</p><div class="row"><div class="starter grow">${esc(q.start)}</div>${playBtn(q.start,"sm ghost")}</div></div>`;
+  }
+  if(st===1){
+    h+=`<button class="btn alt" data-stage="2">🔑 Altro aiutino: parole chiave</button>
+    <button class="btn" data-stage="3">✅ Ho risposto, fammi controllare</button>`;
+  }
+  if(st>=2){
+    h+=`<div class="card reveal"><p class="label">${st>=3?"Quali parole chiave hai detto? (toccale)":"Parole chiave"}</p><div class="chips">
+     ${q.key.map((k,j)=>`<button class="chip ${quiz.got.has(j)?"got":""}" ${st>=3?`data-got="${j}"`:`data-say="${esc(k[0])}"`}>${quiz.got.has(j)?"✓ ":""}${esc(k[0])}<span>${esc(k[1])}</span></button>`).join("")}
+    </div></div>`;
+  }
+  if(st===2){
+    h+=`<div class="card center"><p style="margin:0"><b>Riprova a rispondere</b> usando queste parole.</p></div>
+    <button class="btn" data-stage="3">✅ Ho risposto, fammi controllare</button>`;
+  }
+  if(st>=3){
+    h+=`<div class="card reveal"><div class="row" style="align-items:center"><p class="label grow" style="margin:0">Risposta modello</p>${playBtn(q.say.join(" "),"sm")}</div>
+     ${q.say.map((s,k)=>`<div class="sent"><span class="step">${k+1}</span><span class="t">${esc(s)}</span>${playBtn(s,"sm ghost")}</div>`).join("")}</div>
+    <p class="label center" style="margin-top:18px">Com'è andata?</p>
+    <div class="rate">
+     <button class="r1" data-rate="1"><span class="e">😟</span>Da ripassare</button>
+     <button class="r2" data-rate="2"><span class="e">😐</span>Più o meno</button>
+     <button class="r3" data-rate="3"><span class="e">😀</span>La sapevo!</button>
+    </div>`;
+  }
+  $view.innerHTML=h;
+  if(st===0){/* lettura automatica non permessa senza tocco: invito */}
+}
+function rate(v){
+  const [ti,i]=quiz.list[quiz.pos];
+  scores[qid(TOPICS[ti].id,i)]=v; store.set("eoc_scores",scores);
+  quiz.res.push({ti,i,v,kw:quiz.got.size,tot:TOPICS[ti].qs[i].key.length});
+  quiz.pos++; quiz.stage=0; quiz.got=new Set();
+  if(quiz.pos>=quiz.list.length){stack=[];viewQuizEnd()} else viewQuizQ();
+  window.scrollTo(0,0);
+}
+function viewQuizEnd(){
+  setHeader("Risultato",false);
+  const ok=quiz.res.filter(r=>r.v===3).length, mid=quiz.res.filter(r=>r.v===2).length;
+  const msg= ok>=4?["🏆","Sei pronto/a! Ottimo lavoro."]: ok+mid>=3?["💪","Ci sei quasi. Ripassa quelle in rosso."]:["🌱","Ogni ripasso conta. Riprova tra un po'!"];
+  let h=`<div class="card center" style="margin-top:16px"><div class="big-emoji">${msg[0]}</div><h2 style="margin-top:6px">${ok} su ${quiz.res.length} sicure</h2><p class="muted">${msg[1]}</p></div>
+  <div class="card" style="padding:4px 12px">${quiz.res.map(r=>{const q=TOPICS[r.ti].qs[r.i];return `<button class="qrow" data-q="${r.ti},${r.i}"><span class="dot s${r.v}"></span><span style="flex:1"><b style="font-weight:500">${esc(q.q)}</b><br><span class="muted small">Parole chiave dette: ${r.kw}/${r.tot} · tocca per ripassare</span></span></button>`}).join("")}</div>
+  <button class="btn" id="startQuiz">🔁 Altre 5 domande</button>
+  <button class="btn alt" data-tabgo="study">📚 Torna a studiare</button>`;
+  quiz=null; $view.innerHTML=h;
+}
+
+/* ================= VISTA: FRASI ================= */
+function viewPhrases(){
+  setHeader("Frasi utili",false);
+  let h=`<div class="hero"><h2>Le frasi "salvavita"</h2><p class="muted">Funzionano con <b>qualsiasi</b> domanda. Imparane 4–5 e non resterai mai in silenzio.</p></div>`;
+  PHRASES.forEach(g=>{
+    h+=`<div class="card"><p class="label">${esc(g.t)}</p>${g.items.map(p=>`<div class="ph">${playBtn(p[0],"sm ghost")}<div class="grow"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div></div>`).join("")}</div>`;
+  });
+  h+=`<div class="card"><p class="label">Consigli per la pronuncia</p>
+   <div class="ph"><div class="grow"><b>"th" (the, three)</b><span>Lingua tra i denti, soffia piano. Non dire "de" o "tri".</span></div></div>
+   <div class="ph"><div class="grow"><b>Finali "-ed" (developed, measured)</b><span>Spesso non si sente la "e": "di-VÈ-lopt", "MÈ-giurd".</span></div></div>
+   <div class="ph"><div class="grow"><b>"-tion" (resolution, function)</b><span>Si legge "scion": "re-zo-LÙ-scion".</span></div></div>
+   <div class="ph"><div class="grow"><b>Lettere delle sigle</b><span>C = "sì", P = "pì", U = "iù", I = "ài", G = "gì". CPU = "sì-pì-iù", GUI = "gì-iù-ài".</span></div></div>
+   <p class="small muted" style="margin:8px 0 0">Usa il tasto 🐢 in alto per ascoltare più lentamente.</p></div>`;
+  $view.innerHTML=h;
+}
+
+/* ================= NAVIGAZIONE ================= */
+function render(){
+  const top=stack[stack.length-1];
+  if(top){
+    if(top.v==="topic")viewTopic(top.ti);
+    else if(top.v==="q")viewQuestion(top.ti,top.i);
+    else if(top.v==="quiz")viewQuizQ();
+  } else {
+    if(tab==="study")viewStudy(); else if(tab==="quiz")viewQuizHome(); else viewPhrases();
+  }
+}
+function go(v){stack.push(v);render();window.scrollTo(0,0)}
+function goTab(t){
+  tab=t;stack=[];quiz=null;
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  render();window.scrollTo(0,0);
+}
+document.getElementById("back").onclick=()=>{
+  if("speechSynthesis" in window)speechSynthesis.cancel();
+  const top=stack.pop();
+  if(top&&top.v==="quiz")quiz=null;
+  render();window.scrollTo(0,0);
+};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
+document.getElementById("speed").onclick=()=>{slow=!slow;store.set("eoc_slow",slow);updSpeed();toast(slow?"Voce lenta 🐢":"Voce normale 🐇")};
+updSpeed();
+window.addEventListener("scroll",()=>document.getElementById("hdr").classList.toggle("scrolled",scrollY>4));
+
+$view.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b||b.disabled)return;
+  const d=b.dataset;
+  if(d.say!==undefined){speak(d.say,b.classList.contains("play")?b:null);return}
+  if(d.topic!==undefined){go({v:"topic",ti:+d.topic});return}
+  if(d.q){const [ti,i]=d.q.split(",").map(Number);
+    const top=stack[stack.length-1];
+    if(top&&top.v==="q"){top.ti=ti;top.i=i;render();window.scrollTo(0,0)}
+    else go({v:"q",ti,i});
+    return}
+  if(d.quiztopic!==undefined){quizSel=+d.quiztopic;store.set("eoc_quizsel",quizSel);startQuizFromAnywhere();return}
+  if(d.sel!==undefined){quizSel=d.sel==="all"||d.sel==="weak"?d.sel:+d.sel;store.set("eoc_quizsel",quizSel);viewQuizHome();return}
+  if(b.id==="startQuiz"){startQuizFromAnywhere();return}
+  if(d.stage){quiz.stage=+d.stage;viewQuizQ();return}
+  if(d.got!==undefined){const j=+d.got;quiz.got.has(j)?quiz.got.delete(j):quiz.got.add(j);viewQuizQ();return}
+  if(d.rate){rate(+d.rate);return}
+  if(d.tabgo){goTab(d.tabgo);return}
+});
+function startQuizFromAnywhere(){
+  tab="quiz";document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab==="quiz"));
+  stack=[];startQuiz(); if(quiz){stack=[{v:"quiz"}];render();window.scrollTo(0,0)} else viewQuizHome();
+}
+render();
+</script>
+</body>
+</html>
